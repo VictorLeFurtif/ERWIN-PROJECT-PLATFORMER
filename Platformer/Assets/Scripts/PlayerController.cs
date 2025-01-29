@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float elapsedTime;
     [SerializeField] private float speedTimeScale;
     [SerializeField] private float dashStrenght;
+    [SerializeField] private Animator animatorPlayer;
     
     
     
@@ -35,7 +36,12 @@ public class PlayerController : MonoBehaviour
         RaycastToFlags();
         Dash();
     }
-    
+
+    private void FixedUpdate()
+    {
+        animatorPlayer.SetFloat("Yvelocity",rigidbody2dPlayer.velocity.y);
+        animatorPlayer.SetBool("IsMooving", MathF.Abs(rigidbody2dPlayer.velocity.x) > 0.1);
+    }
 
     private void PlayerMoove()
     {
@@ -76,11 +82,14 @@ public class PlayerController : MonoBehaviour
     }
     private void InverseGravity()
     {
-        if (Input.GetKeyDown(KeyCode.R) && canJump)
+        if (!Input.GetKeyDown(KeyCode.R) || !canJump) return;
+        Physics2D.gravity = -Physics2D.gravity;
+        rigidbody2dPlayer.velocity = new Vector2(rigidbody2dPlayer.velocity.x, -rigidbody2dPlayer.velocity.y);
+        spriteRendererPlayer.flipY = spriteRendererPlayer.flipY switch
         {
-            Physics2D.gravity = -Physics2D.gravity;
-            rigidbody2dPlayer.velocity = new Vector2(rigidbody2dPlayer.velocity.x, -rigidbody2dPlayer.velocity.y);
-        }
+            true => false,
+            false => true
+        };
     }
     
     private void OnCollisionStay2D(Collision2D other)
@@ -121,7 +130,7 @@ public class PlayerController : MonoBehaviour
             Vector2 cursorPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Debug.Log("Clic position : " + cursorPos);
             GameObject newObj = Instantiate(prefabs,cursorPos,Quaternion.identity);
-            newObj.transform.localScale = new Vector2(elapsedTime*speedTimeScale,newObj.transform.localScale.y/2);
+            newObj.transform.localScale = new Vector2(elapsedTime * speedTimeScale, elapsedTime*speedTimeScale);
         }
         
 
