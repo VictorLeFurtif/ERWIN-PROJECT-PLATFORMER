@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject prefabs;
     [SerializeField] private float elapsedTime;
     [SerializeField] private float speedTimeScale;
+    [SerializeField] private float dashStrenght;
+    
     
     
     private void Update()
@@ -31,6 +33,7 @@ public class PlayerController : MonoBehaviour
         PlayerMoove();
         //InverseGravity();
         RaycastToFlags();
+        Dash();
     }
     
 
@@ -39,7 +42,6 @@ public class PlayerController : MonoBehaviour
         x = Input.GetAxisRaw("Horizontal");
     
         rigidbody2dPlayer.velocity = new Vector2(x * moveSpeed, rigidbody2dPlayer.velocity.y);
-        
         switch (rigidbody2dPlayer.velocity.x)
         {
             case > 0:
@@ -55,8 +57,23 @@ public class PlayerController : MonoBehaviour
             rigidbody2dPlayer.AddForce(new Vector2(0,jumpStrenght), ForceMode2D.Impulse);
             canJump = false;
         }
+
+        
     }
 
+    private void Dash()
+    {
+        if (!Input.GetKeyDown(KeyCode.LeftShift)) return;
+        switch (rigidbody2dPlayer.velocity.x)
+        {
+            case > 0:
+                DashHorizontal(Vector2.right);
+                break;
+            case < 0:
+                DashHorizontal(Vector2.left);
+                break;
+        }
+    }
     private void InverseGravity()
     {
         if (Input.GetKeyDown(KeyCode.R) && canJump)
@@ -74,6 +91,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void DashHorizontal(Vector2 direction)
+    {
+            rigidbody2dPlayer.AddForce(new Vector2(dashStrenght* direction.x,0) ,ForceMode2D.Impulse);
+            Debug.Log("Dash");
+        
+    }
+    
     private void OnCollisionExit2D(Collision2D other)
     {
         canJump = false;
@@ -97,7 +121,7 @@ public class PlayerController : MonoBehaviour
             Vector2 cursorPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Debug.Log("Clic position : " + cursorPos);
             GameObject newObj = Instantiate(prefabs,cursorPos,Quaternion.identity);
-            newObj.transform.localScale = new Vector2(elapsedTime*speedTimeScale,newObj.transform.localScale.y);
+            newObj.transform.localScale = new Vector2(elapsedTime*speedTimeScale,newObj.transform.localScale.y/2);
         }
         
 
