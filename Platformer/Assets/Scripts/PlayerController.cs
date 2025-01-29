@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         PlayerMoove();
-        //InverseGravity();
+        InverseGravity();
         RaycastToFlags();
         Dash();
     }
