@@ -14,13 +14,14 @@ public class ToolBar : MonoBehaviour
     {
         arrayIndex = 0;
         originalColor = itemList[0].color;
+        UpdateColor();
     }
 
     private void UpdateColor()
     {
-        foreach (var VARIABLE in itemList)
+        foreach (var variable in itemList)
         {
-            VARIABLE.color = originalColor;
+            variable.color = originalColor;
         }
         itemList[arrayIndex].color = Color.gray;
     }
@@ -28,31 +29,33 @@ public class ToolBar : MonoBehaviour
     private void Update()
     {
         var scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (scroll != 0)
+        if (scroll == 0) return;
+        if (scroll > 0)
         {
-            if (scroll > 0)
+            if (arrayIndex == 0)
             {
-                if (arrayIndex == 0)
-                {
-                    arrayIndex = 3;
-                    UpdateColor();
-                    return;
-                }
-                arrayIndex--;
+                arrayIndex = 3;
+                Inventory.instance.ChangeItem(arrayIndex);
+                UpdateColor();
+                return;
             }
-            else
-            {
-                if (arrayIndex == 3)
-                {
-                    arrayIndex = 0;
-                    UpdateColor();
-                    return;
-                }
-                arrayIndex++;
-            }
-
-            UpdateColor();
+            arrayIndex--;
         }
+        else
+        {
+            if (arrayIndex == 3)
+            {
+                arrayIndex = 0;
+                Inventory.instance.ChangeItem(arrayIndex);
+                UpdateColor();
+                return;
+            }
+            arrayIndex++;
+        }
+
+        Inventory.instance.ChangeItem(arrayIndex);
+
+        UpdateColor();
     }
 }
 

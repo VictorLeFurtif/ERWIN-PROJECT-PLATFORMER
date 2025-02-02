@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     private  float jumpStrenght;
     private bool canJump = false;
     [SerializeField] private float timeToChangeGravity;
-    [SerializeField] private GameObject prefabs;
+    
     [SerializeField] private float elapsedTime;
     [SerializeField] private float speedTimeScale;
     [SerializeField] private float dashStrenght;
@@ -129,7 +129,7 @@ public class PlayerController : MonoBehaviour
             if (Camera.main == null) return;
             Vector2 cursorPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Debug.Log("Clic position : " + cursorPos);
-            GameObject newObj = Instantiate(prefabs,cursorPos,Quaternion.identity);
+            GameObject newObj = Instantiate(Inventory.instance.selectedItem,cursorPos,Quaternion.identity);
             newObj.transform.localScale = new Vector2(elapsedTime * speedTimeScale, elapsedTime*speedTimeScale);
         }
         
