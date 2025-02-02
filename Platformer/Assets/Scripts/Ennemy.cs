@@ -10,6 +10,7 @@ public class Ennemy : MonoBehaviour
     [SerializeField] private float radius;
     [SerializeField] private bool shooting;
     [SerializeField] private float spawnRate;
+    [SerializeField] private Animator animatorEnnemy;
     private enum EnnemyState
     {
         Idle,
@@ -18,12 +19,14 @@ public class Ennemy : MonoBehaviour
 
     private void Start()
     {
-        currentEnnemyState = EnnemyState.Idle; 
+        animatorEnnemy = GetComponent<Animator>();
+        currentEnnemyState = EnnemyState.Idle;
     }
 
     private IEnumerator PrepareSpell()
     {
         currentEnnemyState = EnnemyState.Attack; 
+        animatorEnnemy.SetTrigger("AttackSpell");
 
         for (var i = 0; i < numberOfProjectile; i++)
         {
@@ -46,9 +49,11 @@ public class Ennemy : MonoBehaviour
         {
             StartCoroutine(PrepareSpell()); 
         }
+
+        CheckForAnimationAttack();
     }
 
-    private void CheckForAnimation()
+    private void CheckForAnimationAttack()
     {
         
     }
