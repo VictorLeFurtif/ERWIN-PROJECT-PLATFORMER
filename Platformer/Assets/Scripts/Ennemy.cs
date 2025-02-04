@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using Vector2 = System.Numerics.Vector2;
@@ -11,14 +12,18 @@ public class Ennemy : MonoBehaviour
     [SerializeField] private bool shooting;
     [SerializeField] private float spawnRate;
     [SerializeField] private Animator animatorEnnemy;
+    [SerializeField] private Ennemy scriptToCancel;
+    
     private enum EnnemyState
     {
         Idle,
-        Attack
+        Attack,
+        Dead
     }
 
     private void Start()
     {
+        scriptToCancel = this;
         animatorEnnemy = GetComponent<Animator>();
         currentEnnemyState = EnnemyState.Idle;
     }
@@ -43,6 +48,21 @@ public class Ennemy : MonoBehaviour
         currentEnnemyState = EnnemyState.Idle; 
     }
 
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (currentEnnemyState != EnnemyState.Dead && !other.gameObject.CompareTag("Rock")) return;
+        currentEnnemyState = EnnemyState.Dead;
+        animatorEnnemy.Play("Death");
+        Destroy(other.gameObject);
+        Die();
+    }
+
+    private void Die()
+    {
+        this.enabled = false;
+        Destroy(gameObject,10);
+    }   
+    
     private void Update()
     {
         if (currentEnnemyState == EnnemyState.Idle)
