@@ -5,16 +5,21 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private Transform target;
-    [SerializeField] private float smoothSpeed = 0.125f;
-    [SerializeField] private Vector3 offSet;
-
-    private void LateUpdate()
-    {
-        Vector3 desiredPosition = target.position + offSet;
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
-        transform.position = smoothedPosition;
+        [SerializeField] private Vector3 offSett = new Vector3(0f,0f,-10f);
+        [SerializeField] private Transform target;
+        [SerializeField] private float smoothTime = 0.25f;
+        private Vector3 velocity = Vector3.zero;
         
-        transform.LookAt(target);
-    }
+        
+    
+        private void FollowPlayer()
+        {
+            Vector3 targetPosition = target.position + offSett;
+            transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
+        }
+    
+        private void LateUpdate()
+        {
+            FollowPlayer();
+        }
 }

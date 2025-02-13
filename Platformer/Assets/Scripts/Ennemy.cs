@@ -60,7 +60,7 @@ public class Ennemy : MonoBehaviour
     private void Die()
     {
         this.enabled = false;
-        Destroy(gameObject,10);
+        Destroy(gameObject,1);
     }   
     
     private void Update()

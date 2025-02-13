@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speedTimeScale;
     [SerializeField] private float dashStrenght;
     [SerializeField] private Animator animatorPlayer;
+    [SerializeField] private float angleForJump;
     
     
     
@@ -34,12 +35,22 @@ public class PlayerController : MonoBehaviour
         PlayerMoove();
         InverseGravity();
         RaycastToFlags();
-        Dash();
     }
 
     private void FixedUpdate()
     {
-        animatorPlayer.SetFloat("Yvelocity",rigidbody2dPlayer.velocity.y);
+        var velocityY = rigidbody2dPlayer.velocity.y;
+        Debug.Log(velocityY);
+        if (Mathf.Abs(velocityY) < 4f) 
+        {
+            velocityY = 0;
+        }
+        else
+        {
+            animatorPlayer.SetFloat("Yvelocity",velocityY);
+        }
+        
+        
         animatorPlayer.SetBool("IsMooving", MathF.Abs(rigidbody2dPlayer.velocity.x) > 0.1);
     }
 
@@ -63,23 +74,10 @@ public class PlayerController : MonoBehaviour
             rigidbody2dPlayer.AddForce(new Vector2(0,jumpStrenght), ForceMode2D.Impulse);
             canJump = false;
         }
-
         
     }
 
-    private void Dash()
-    {
-        if (!Input.GetKeyDown(KeyCode.LeftShift)) return;
-        switch (rigidbody2dPlayer.velocity.x)
-        {
-            case > 0:
-                DashHorizontal(Vector2.right);
-                break;
-            case < 0:
-                DashHorizontal(Vector2.left);
-                break;
-        }
-    }
+   
     private void InverseGravity()
     {
         if (!Input.GetKeyDown(KeyCode.R) || !canJump) return;
@@ -96,16 +94,10 @@ public class PlayerController : MonoBehaviour
     {
         foreach (var contact in other.contacts)
         {
-            canJump = contact.normal.y > 0.5f;
+            canJump = contact.normal.y > angleForJump;
         }
     }
-
-    private void DashHorizontal(Vector2 direction)
-    {
-            rigidbody2dPlayer.AddForce(new Vector2(dashStrenght* direction.x,0) ,ForceMode2D.Impulse);
-            Debug.Log("Dash");
-        
-    }
+    
     
     private void OnCollisionExit2D(Collision2D other)
     {
